@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import type { User } from '@supabase/supabase-js';
 
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     checkUser();
     
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
-        checkAdminStatus(session.user.id);
+        await checkAdminStatus(session.user.id);
       } else {
         setIsAdmin(false);
+        setLoading(false);
       }
     });
 
@@ -28,26 +28,31 @@ export function useAuth() {
       setUser(user);
       if (user) {
         await checkAdminStatus(user.id);
+      } else {
+        setLoading(false);
       }
     } catch (error) {
       console.error('Error checking user:', error);
-    } finally {
       setLoading(false);
     }
   };
 
   const checkAdminStatus = async (userId: string) => {
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .select('is_admin')
         .eq('id', userId)
         .single();
       
+      if (error) throw error;
+      
       setIsAdmin(data?.is_admin || false);
     } catch (error) {
       console.error('Error checking admin status:', error);
       setIsAdmin(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -58,6 +63,8 @@ export function useAuth() {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    setUser(null);
+    setIsAdmin(false);
   };
 
   return { user, isAdmin, loading, signIn, signOut };
