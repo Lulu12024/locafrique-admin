@@ -58,6 +58,8 @@ function useAuth() {
     } catch (error) {
       console.error('Error checking admin status:', error);
       setIsAdmin(false);
+    } finally {
+      setLoading(false); // ← AJOUTEZ CETTE LIGNE
     }
   };
 
