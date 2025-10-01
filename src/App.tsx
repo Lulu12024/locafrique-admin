@@ -48,18 +48,30 @@ function useAuth() {
 
   const checkAdminStatus = async (userId: string) => {
     try {
-      const { data } = await supabase
+      console.log('🔍 Vérification admin pour:', userId);
+      
+      const { data, error } = await supabase
         .from('profiles')
         .select('is_admin')
         .eq('id', userId)
         .single();
       
-      setIsAdmin(data?.is_admin || false);
-    } catch (error) {
-      console.error('Error checking admin status:', error);
+      console.log('📊 Résultat:', { data, error });
+      
+      if (error) {
+        console.error('❌ Erreur:', error.message);
+        setIsAdmin(false);
+      } else {
+        const isAdminUser = data?.is_admin === true;
+        console.log('✅ Est admin:', isAdminUser);
+        setIsAdmin(isAdminUser);
+      }
+    } catch (error: any) {
+      console.error('❌ Exception:', error.message);
       setIsAdmin(false);
     } finally {
-      setLoading(false); // ← AJOUTEZ CETTE LIGNE
+      console.log('🏁 Fin du chargement');
+      setLoading(false);
     }
   };
 
