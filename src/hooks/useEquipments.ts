@@ -46,28 +46,28 @@ export function useEquipments() {
 
   const updateEquipment = async (id: string, status: string, feedback?: string) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      const updates = {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        const updates = {
         moderation_status: status,
         moderated_at: new Date().toISOString(),
         moderated_by: user?.id,
         moderation_feedback: feedback ? { comment: feedback } : null,
-        status: status === 'approved' ? 'available' : 'pending'
-      };
+        status: status === 'approved' ? 'disponible' : 'en_attente'  // ← Valeurs en français
+        };
 
-      const { error } = await supabase
+        const { error } = await supabase
         .from('equipments')
         .update(updates)
         .eq('id', id);
 
-      if (error) throw error;
-      await loadEquipments();
+        if (error) throw error;
+        await loadEquipments();
     } catch (error) {
-      console.error('Error updating equipment:', error);
-      throw error;
+        console.error('Error updating equipment:', error);
+        throw error;
     }
-  };
+    };
 
   useEffect(() => {
     loadEquipments();
