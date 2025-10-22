@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Eye, CheckCircle, XCircle, Image as ImageIcon } from 'lucide-react';
+import { Search, Eye, Image as ImageIcon } from 'lucide-react';
 import { useEquipments } from '../hooks/useEquipments';
 import { EquipmentModal } from '../components/modals/EquipmentModal';
 
