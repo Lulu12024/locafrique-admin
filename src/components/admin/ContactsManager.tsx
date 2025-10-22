@@ -1,7 +1,7 @@
 // src/components/admin/ContactsManager.tsx
-import React, { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { Search, Calendar, User, Phone, Mail, MessageCircle, Eye, Check, X } from 'lucide-react';
+import  { useState, useEffect } from 'react';
+import { supabase } from '../../lib/supabase';
+import { Search, Calendar, User, Phone, MessageCircle, Check, X } from 'lucide-react';
 
 export default function ContactsManager() {
   const [bookings, setBookings] = useState<any[]>([]);
