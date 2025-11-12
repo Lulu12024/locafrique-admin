@@ -1,11 +1,12 @@
 // ========================================
 // Fichier: supabase/functions/send-equipment-approval-email/index.ts
-// Fonction Edge pour envoyer un email quand un équipement est approuvé
+// SOLUTION OPTIMALE: Encodage base64 du contenu HTML
 // ========================================
 
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
+import { encode as base64Encode } from "https://deno.land/std@0.190.0/encoding/base64.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -74,7 +75,7 @@ serve(async (req) => {
     const ownerFirstName = equipment.owner.first_name || 'Propriétaire';
     const equipmentTitle = equipment.title;
 
-    // Email HTML au propriétaire
+    // Email HTML au propriétaire (IDENTIQUE AU MAIL DE REJET)
     const emailHTML = `<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -171,6 +172,7 @@ Votre équipement est maintenant visible par des milliers d'utilisateurs. Assure
       },
     });
 
+    // 🔧 SOLUTION: Utiliser la même structure que le mail de rejet
     await client.send({
       from: gmailUser,
       to: equipment.owner.email,
